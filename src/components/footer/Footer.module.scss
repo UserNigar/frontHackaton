@@ -1,0 +1,53 @@
+.main {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 3rem 0;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
+
+    .links {
+      margin-bottom: 2rem;
+
+      a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 1rem;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #ccc;
+        }
+      }
+    }
+
+    .social {
+      margin-bottom: 2rem;
+
+      a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 1rem;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #ccc;
+        }
+      }
+    }
+
+    .copyright {
+      font-size: 0.9rem;
+      color: #999;
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+}
