@@ -1,7 +1,7 @@
 import React from 'react'
-import style from './Footer.module.scss'
+import style from './Header.module.scss'
 
-const Footer = () => {
+const Header = () => {
     return (
        <div className={style.main}>
 
@@ -9,4 +9,4 @@ const Footer = () => {
     )
 }
 
-export default Footer
+export default Header
