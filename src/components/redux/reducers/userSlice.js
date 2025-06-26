@@ -1,6 +1,7 @@
 // src/store/auth/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import {browser} from "globals";
 
 const initialState = {
     user: null,
@@ -9,7 +10,7 @@ const initialState = {
     isAuthenticated: false,
 };
 
-const BASE_URL = 'https://your-backend.com/api';
+const BASE_URL = 'http://172.16.1.111:5092/api';
 
 // Utility to extract error messages
 const getErrorMessage = (error) => {
@@ -21,12 +22,25 @@ const getErrorMessage = (error) => {
 
 // ---------------------- Thunks ----------------------
 
-// Signup
+// Get Profile
+export const getProfile = createAsyncThunk(
+    'auth/getProfile',
+    async (_, thunkAPI) => {
+        try {
+            const res = await axios.get(`${BASE_URL}/User/me`, {withCredentials: true});
+            console.log(res)
+            // return res.data;
+        } catch (err) {
+            return thunkAPI.rejectWithValue(getErrorMessage(err));
+        }
+    }
+);
+
 export const signup = createAsyncThunk(
     'auth/signup',
     async (data, thunkAPI) => {
         try {
-            const res = await axios.post(`${BASE_URL}/auth/signup`, data, { withCredentials: true });
+            const res = await axios.post(`${BASE_URL}/User/register`, data, { withCredentials: true });
             return res.data;
         } catch (err) {
             return thunkAPI.rejectWithValue(getErrorMessage(err));
@@ -34,12 +48,22 @@ export const signup = createAsyncThunk(
     }
 );
 
+
+function setCookie(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    let expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
 // Login
 export const login = createAsyncThunk(
     'auth/login',
     async (data, thunkAPI) => {
         try {
-            const res = await axios.post(`${BASE_URL}/auth/login`, data, { withCredentials: true });
+            const res = await axios.post(`${BASE_URL}/User/login`, data, { withCredentials: true });
+            // setCookie("refreshToken", res.data.refreshToken, 2)
+            // setCookie("accessToken", res.data.accessToken, 2)
             return res.data;
         } catch (err) {
             return thunkAPI.rejectWithValue(getErrorMessage(err));
@@ -134,6 +158,21 @@ const authSlice = createSlice({
             .addCase(sendOTP.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload ?? 'OTP failed';
+            })
+
+            // Get Profile
+            .addCase(getProfile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                state.isAuthenticated = true;
+            })
+            .addCase(getProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload ?? 'Failed to fetch profile';
             });
     },
 });
